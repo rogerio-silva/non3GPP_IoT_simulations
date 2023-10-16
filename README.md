@@ -74,8 +74,8 @@ Figure 3 displays results relative to QoS. The large areas in light colors for O
 Start by cloning this repository.
 
 ```bash
-git clone https://github.com/LABORA-INF-UFG/non3GPP_IoT_simulations.git 
-cd non3GPP_IoT_simulations
+git clone https://github.com/LABORA-INF-UFG/non3GPP_IoT_simulations.git iot-sim
+cd iot-sim
 ```
 
 The first step is to build the version 3.36 of NS3.
@@ -85,9 +85,8 @@ git clone https://github.com/nsnam/ns-3-dev-git ns-3
 cd ns-3
 git checkout ns-3.36
 cp -r ../contrib/* ./contrib/
-ln -s ~/non3GPP_IoT_simulations/scratch/optimal-distrib-experiment.cc ~/non3GPP_IoT_simulations/ns-3/scratch/optimal-distrib-experiment.cc
-ln -s ~/non3GPP_IoT_simulations/scratch/thesis-experiment.cc ~/non3GPP_IoT_simulations/ns-3/scratch/thesis-experiment.cc
-
+ln -s ~/iot-sim/scratch/optimal-distrib-experiment.cc ~/iot-sim/ns-3/scratch/optimal-distrib-experiment.cc
+ln -s ~/iot-sim/scratch/thesis-experiment.cc ~/iot-sim/ns-3/scratch/thesis-experiment.cc
 ./ns3 configure --enable-examples
 ./ns3 build
 ```
