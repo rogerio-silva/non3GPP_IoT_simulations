@@ -17,8 +17,6 @@ static u_int32_t g_errorInterf = 0;
 static u_int32_t g_errorSens = 0;
 static u_int32_t g_errorNoReceivers = 0;
 
-enum distributionMode { CARTESIAN, DENSE, OPTIMIZED };
-
 // Model Vars
 NodeContainer endDevicesContainer;
 NodeContainer gatewaysContainer;

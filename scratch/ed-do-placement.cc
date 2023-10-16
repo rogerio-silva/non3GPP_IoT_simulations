@@ -171,49 +171,6 @@ main (int argc, char *argv[])
       tmpMobility[x].Install (tmpDevices[x]);
       devicesContainer.Add (tmpDevices[x]);
     }
-  //  //Put the devices in the respective cells
-  //  NodeContainer tmpDevices[ppW][ppH];
-  //  NodeContainer devicesContainer;
-  //  MobilityHelper tmpMobility[ppW][ppH];
-  //  int posFactor = dParams.area_height/ppH;
-  //  for (int w = 0; w < ppW; w++)
-  //    {
-  //      for (int h = 0; h < ppH; h++)
-  //        {
-  //          if (nDev[w][h] > 0)
-  //            {
-  //              tmpDevices[w][h].Create (nDev[w][h]);
-  //              tmpMobility[w][h].SetPositionAllocator (
-  //                  "ns3::RandomRectanglePositionAllocator", "X",
-  //                  PointerValue (CreateObjectWithAttributes<UniformRandomVariable> (
-  //                      "Min", DoubleValue (w * posFactor), "Max", DoubleValue (w * posFactor + posFactor))),
-  //                  "Y",
-  //                  PointerValue (CreateObjectWithAttributes<UniformRandomVariable> (
-  //                      "Min", DoubleValue (h * posFactor), "Max", DoubleValue (h * posFactor + posFactor))));
-  //              tmpMobility[w][h].SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-  //              tmpMobility[w][h].Install (tmpDevices[w][h]);
-  //              devicesContainer.Add (tmpDevices[w][h]);
-  //            }
-  //        }
-  //    }
-
-  //  Unallocated devices
-
-//  MobilityHelper tmpMob;
-//  NodeContainer tmpDev;
-//  if (devicesContainer.GetN () < (u_int32_t) nDevices)
-//    {
-//      tmpDev.Create (nDevices - devicesContainer.GetN ());
-//      tmpMob.SetPositionAllocator ("ns3::RandomRectanglePositionAllocator", "X",
-//                                   PointerValue (CreateObjectWithAttributes<UniformRandomVariable> (
-//                                       "Min", DoubleValue (0), "Max", DoubleValue (10000))),
-//                                   "Y",
-//                                   PointerValue (CreateObjectWithAttributes<UniformRandomVariable> (
-//                                       "Min", DoubleValue (0), "Max", DoubleValue (10000))));
-//      tmpMob.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
-//      tmpMob.Install (tmpDev);
-//      devicesContainer.Add (tmpDev);
-//    }
 
   Ptr<UniformRandomVariable> rz = CreateObject<UniformRandomVariable> ();
   rz->SetAttribute ("Min", DoubleValue (1.0));

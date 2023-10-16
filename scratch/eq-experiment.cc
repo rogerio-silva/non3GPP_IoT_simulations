@@ -1,4 +1,4 @@
-/*
+  /*
  * This script simulates a simple network in which one end device sends one
  * packet to the gateway.
  */
@@ -21,6 +21,7 @@
 #include "ns3/lorawan-module.h"
 #include "ns3/propagation-module.h"
 #include <algorithm>
+#include <ctime>
 #include <iomanip>
 #include <unistd.h>
 
@@ -28,7 +29,7 @@
 using namespace ns3;
 using namespace lorawan;
 
-NS_LOG_COMPONENT_DEFINE ("OptimalExperiment");
+NS_LOG_COMPONENT_DEFINE ("EquidistantExperiment");
 
 NodeContainer endDevices;
 NodeContainer gateways;
@@ -37,10 +38,7 @@ MobilityHelper mobilityED, mobilityGW;
 
 int nDevices = 0;
 int nGateways = 0;
-int nGat = 0;
-int cc = 0;
 
-Time expDelay = Seconds (0);
 int noMoreReceivers = 0;
 int interfered = 0;
 int received = 0;
@@ -69,11 +67,11 @@ void
 CheckReceptionByAllGWsComplete (std::map<Ptr<Packet const>, myPacketStatus>::iterator it)
 {
   // Check whether this packet is received by all gateways
-  if ((*it).second.outcomeNumber == nGat)
+  if ((*it).second.outcomeNumber == nGateways)
     {
       // Update the statistics
       myPacketStatus status = (*it).second;
-      for (int j = 0; j < nGat; j++)
+      for (int j = 0; j < nGateways; j++)
         {
           switch (status.outcomes.at (j))
             {
@@ -113,7 +111,7 @@ TransmissionCallback (Ptr<Packet const> packet, uint32_t systemId)
   status.senderId = systemId;
   status.sentTime = Simulator::Now ();
   status.outcomeNumber = 0;
-  status.outcomes = std::vector<enum PacketOutcome> (nGat, _UNSET);
+  status.outcomes = std::vector<enum PacketOutcome> (nGateways, _UNSET);
 
   packetTracker.insert (std::pair<Ptr<Packet const>, myPacketStatus> (packet, status));
 }
@@ -127,20 +125,14 @@ PacketReceptionCallback (Ptr<Packet const> packet, uint32_t systemId)
   std::map<Ptr<Packet const>, myPacketStatus>::iterator it = packetTracker.find (packet);
   if ((*it).second.outcomes.size () > systemId - nDevices)
     {
-      //lembre que o ID do gateways é enumerado após todos os devices, logo numero sequencial
-      // do GW é contado subtraindo o nDevices. Ainda que os pacotes originados do mesmo device
-      // no mesmo instante é recebido pelos gateways na área de alcance,
-      // <e que essas duplicidades são removidas pela CheckReceptionByAllGWsComplete> sem certeza nisso
       (*it).second.outcomes.at (systemId - nDevices) = _RECEIVED;
       (*it).second.outcomeNumber += 1;
-//      if ((*it).second.outcomeNumber == 1 || (*it).second.receivedTime == Seconds (0))
+      //      if ((*it).second.outcomeNumber == 1 || (*it).second.receivedTime == Seconds (0))
       if ((*it).second.receivedTime == Seconds (0))
         {
           (*it).second.receivedTime = Simulator::Now ();
           (*it).second.receiverId = systemId;
-//          cc++;
         }
-
       CheckReceptionByAllGWsComplete (it);
     }
 }
@@ -148,7 +140,7 @@ PacketReceptionCallback (Ptr<Packet const> packet, uint32_t systemId)
 void
 InterferenceCallback (Ptr<Packet const> packet, uint32_t systemId)
 {
-   NS_LOG_INFO ("A packet was lost because of interference at gateway " << systemId);
+  // NS_LOG_INFO ("A packet was lost because of interference at gateway " << systemId);
 
   std::map<Ptr<Packet const>, myPacketStatus>::iterator it = packetTracker.find (packet);
   if ((*it).second.outcomes.size () > systemId - nDevices)
@@ -176,7 +168,7 @@ NoMoreReceiversCallback (Ptr<Packet const> packet, uint32_t systemId)
 void
 UnderSensitivityCallback (Ptr<Packet const> packet, uint32_t systemId)
 {
-  NS_LOG_INFO ("A packet arrived at the gateway under sensitivity" << systemId);
+  NS_LOG_INFO ("A packet arrived at the gateway under sensitivity at gateway " << systemId);
 
   std::map<Ptr<Packet const>, myPacketStatus>::iterator it = packetTracker.find (packet);
   if ((*it).second.outcomes.size () > systemId - nDevices)
@@ -185,12 +177,6 @@ UnderSensitivityCallback (Ptr<Packet const> packet, uint32_t systemId)
       (*it).second.outcomeNumber += 1;
     }
   CheckReceptionByAllGWsComplete (it);
-}
-
-uint8_t
-SFToDR (uint8_t sf)
-{
-  return (12 - sf);
 }
 
 /**
@@ -232,7 +218,7 @@ EndDevicesPlacement (std::string filename)
 * @param filename: arquivo de entrada
 * @return number of gateways
 **/
-int
+void
 GatewaysPlacement (std::string filename)
 {
   double gwX = 0.0, gwY = 0.0, gwZ = 0.0;
@@ -240,7 +226,7 @@ GatewaysPlacement (std::string filename)
   const char *c = filename.c_str ();
   // Get Devices position from File
   std::ifstream in_File (c);
-  int nG = 0;
+  int nGat = 0;
   if (!in_File)
     {
       std::cout << "Could not open the file - '" << filename << "'" << std::endl;
@@ -250,15 +236,14 @@ GatewaysPlacement (std::string filename)
       while (in_File >> gwX >> gwY >> gwZ)
         {
           allocatorGW->Add (Vector (gwX, gwY, gwZ));
-          nG++;
+          nGat++;
         }
       in_File.close ();
     }
-  gateways.Create (nG);
+  gateways.Create (nGat);
   mobilityGW.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
   mobilityGW.SetPositionAllocator (allocatorGW);
   mobilityGW.Install (gateways);
-  return nG;
 }
 
 void
@@ -280,6 +265,7 @@ PrintEndDevicesParameters (std::string filename)
       //                              << txPower <<  std::endl;
       spreadingFactorFile << oDevice->GetId () << " " << sf << " " << txPower << " "
                           << (sf * (125000 / (pow (2, sf))) * (4 / 5.0)) << std::endl;
+      //      std::cout << sf * (125000/(pow(2,sf))) << std::endl;
     }
   spreadingFactorFile.close ();
 }
@@ -308,12 +294,12 @@ main (int argc, char *argv[])
 
   RngSeedManager::SetSeed (seed + 100);
 
-  Config::SetDefault ("ns3::EndDeviceLorawanMac::DRControl", BooleanValue (false));
+  Config::SetDefault ("ns3::EndDeviceLorawanMac::DRControl", BooleanValue (true));
 
   // Set up logging
   if (verbose)
     {
-      LogComponentEnable ("DensityOrientedExperiment", LOG_LEVEL_ALL);
+      LogComponentEnable ("EquidistantExperiment", LOG_LEVEL_ALL);
       //      LogComponentEnable ("LoraHelper", LOG_LEVEL_ALL);
       //      LogComponentEnable ("LoraChannel", LOG_LEVEL_INFO);
       //      LogComponentEnable ("LogicalLoraChannelHelper", LOG_LEVEL_ALL);
@@ -336,11 +322,12 @@ main (int argc, char *argv[])
       LogComponentEnableAll (LOG_PREFIX_FUNC);
       LogComponentEnableAll (LOG_PREFIX_NODE);
       LogComponentEnableAll (LOG_PREFIX_TIME);
-    }
 
+    }
   /************************
   *  Create the channel  *
   ************************/
+
   // Create the lora channel object
   // modelo de propagação (okumura ou logdistance)
   Ptr<PropagationDelayModel> delay = CreateObject<ConstantSpeedPropagationDelayModel> ();
@@ -356,7 +343,6 @@ main (int argc, char *argv[])
       loss->SetReference (1, 10.0);
       channel = CreateObject<LoraChannel> (loss, delay);
     }
-
   /************************
   *  Create the helpers  *
   ************************/
@@ -394,29 +380,8 @@ main (int argc, char *argv[])
   macHelper.SetAddressGenerator (addrGen);
   phyHelper.SetDeviceType (LoraPhyHelper::ED);
   macHelper.SetDeviceType (LorawanMacHelper::ED_A);
-  macHelper.SetRegion (LorawanMacHelper::EU);
+    macHelper.SetRegion (LorawanMacHelper::EU);
   helper.Install (phyHelper, macHelper, endDevices);
-
-  // Configuring devices
-  Ptr<LoraPhy> phyED;
-  Ptr<ClassAEndDeviceLorawanMac> macED;
-  std::string fileConfig = cwd + "/data/model/output/optimized_DevicesConfigurations_" +
-                           std::to_string(seed) + "s_" + std::to_string(nGateways)
-                           + "x1Gv_" + std::to_string(nDevices) +
-                           "D.dat";
-  const char *cfg = fileConfig.c_str ();
-  std::ifstream in_File (cfg);
-  double id, sf, tp;
-  while (in_File >> id >> sf >> tp)
-    {
-      Ptr<Node> node = endDevices.Get (id);
-      Ptr<LoraNetDevice> loraNetDevice = node->GetDevice (0)->GetObject<LoraNetDevice> ();
-      Ptr<LoraPhy> phy = loraNetDevice->GetPhy ();
-      macED = loraNetDevice->GetMac ()->GetObject<ClassAEndDeviceLorawanMac> ();
-      macED->SetDataRate (SFToDR (sf));
-      macED->SetTransmissionPower (tp);
-    }
-  in_File.close ();
 
   // Connect trace sources
   for (NodeContainer::Iterator j = endDevices.Begin (); j != endDevices.End (); ++j)
@@ -433,11 +398,9 @@ main (int argc, char *argv[])
 
   NS_LOG_INFO ("Creating gateways...");
 
-  std::string filename = cwd + "/data/model/output/optimized_Placement_" +
-                         std::to_string (seed) + "s_" + std::to_string (nGateways) + "x1Gv_" +
-                         std::to_string (nDevices) + "D.dat";
-
-  nGat = GatewaysPlacement (filename);
+  std::string filename = cwd + "/data/placement/equidistantPlacement_" +
+                         std::to_string (nGateways) + ".dat";
+  GatewaysPlacement (filename);
 
   // Create a net device for each gateway
   phyHelper.SetDeviceType (LoraPhyHelper::GW);
@@ -459,16 +422,15 @@ main (int argc, char *argv[])
       gwPhy->TraceConnectWithoutContext ("LostPacketBecauseUnderSensitivity",
                                          MakeCallback (&UnderSensitivityCallback));
     }
-
   NS_LOG_DEBUG ("Completed configuration");
 
   /*********************************************
   *  Install applications on the end devices  *
   *********************************************/
 
-  Time appStopTime = Seconds (simulationTime);
+  Time appStopTime = Seconds (simulationTime); // ten minutes
   PeriodicSenderHelper appHelper = PeriodicSenderHelper ();
-  appHelper.SetPeriod (Seconds (appPeriodSeconds));
+  appHelper.SetPeriod (Seconds (appPeriodSeconds)); // each 60 seconds
   appHelper.SetPacketSize (packetSize);
   ApplicationContainer appContainer = appHelper.Install (endDevices);
 
@@ -492,8 +454,8 @@ main (int argc, char *argv[])
   ForwarderHelper forHelper = ForwarderHelper ();
 
   // Create a NS for the network
-  // nsHelper.SetAdr ("ns3::AdrComponent");
-  nsHelper.EnableAdr (false);
+  nsHelper.SetAdr ("ns3::AdrComponent");
+  nsHelper.EnableAdr (true);
   nsHelper.SetEndDevices (endDevices);
   nsHelper.SetGateways (gateways);
   nsHelper.Install (networkServer);
@@ -509,25 +471,22 @@ main (int argc, char *argv[])
 
   Simulator::Run ();
   NS_LOG_INFO ("Computing performance metrics...");
-
-  std::string path_output = cwd + "/data/results/optimized";
+  std::string path_output = cwd + "/data/results/equidistant_";
   if (printRates)
     {
-
       /**
        * Print COMM PARAMETERS
        * **/
-      std::string par_filename = path_output + "_transmissionParameters_" +
-                                 std::to_string (seed) + "_" + std::to_string (nGat) + "x" +
+      std::string par_filename = path_output + "transmissionParameters_" +
+                                 std::to_string (seed) + "_" + std::to_string (nGateways) + "x" +
                                  std::to_string (nDevices) + ".dat";
       PrintEndDevicesParameters (par_filename);
 
       /**
-         * Print PACKETS
-         * **/
-
-      std::string packs_filename =  path_output + "_transmissionPackets_" +
-                                   std::to_string (seed) + "_" + std::to_string (nGat) + "x" +
+       * Print PACKETS
+       * **/
+      std::string packs_filename = path_output + "transmissionPackets_" +
+                                   std::to_string (seed) + "_" + std::to_string (nGateways) + "x" +
                                    std::to_string (nDevices) + ".dat";
       const char *cPK = packs_filename.c_str ();
       std::ofstream filePKT;
@@ -555,9 +514,9 @@ main (int argc, char *argv[])
        * Print GLOBAL PACKET DELIVERY
        * **/
 
-      std::string phyPerformanceFile =  path_output + "_transmissionData_" +
-                                       std::to_string (nGat) + "x" + std::to_string (nDevices) +
-                                       ".dat";
+      std::string phyPerformanceFile = path_output + "transmissionData_" +
+                                       std::to_string (nGateways) + "x" +
+                                       std::to_string (nDevices) + ".dat";
       const char *c = phyPerformanceFile.c_str ();
       std::ofstream file;
       file.open (c, std::ios::app);
@@ -575,25 +534,21 @@ main (int argc, char *argv[])
        * Print PACKET DELIVERY PER GATEWAY
        * **/
 
-      std::string phyPerfPerGatewayFile = path_output + "_transmissionDataPerGateway_" +
-                                          std::to_string (seed) + "_" + std::to_string (nGat) +
+      std::string phyPerfPerGatewayFile = path_output + "transmissionDataPerGateway_" +
+                                          std::to_string (seed) + "_" + std::to_string (nGateways) +
                                           "x" + std::to_string (nDevices) + ".dat";
-
       const char *cG = phyPerfPerGatewayFile.c_str ();
       std::ofstream fileG;
       fileG.open (cG, std::ios::out);
       for (NodeContainer::Iterator j = gateways.Begin (); j != gateways.End (); ++j)
         {
           Ptr<Node> object = *j;
-          // gateway_id totPacketsSent receivedPackets interferedPackets noMoreGwPackets underSensitivityPackets lostBecauseTxPackets
-          fileG << object->GetId () << " "
-                << tracker.PrintPhyPacketsPerGw (Seconds (0), appStopTime + Minutes (10),
-                                                 object->GetId ())
+          // exec_number gateway_id totPacketsSent receivedPackets interferedPackets noMoreGwPackets underSensitivityPackets lostBecauseTxPackets
+          fileG << seed << " " << object->GetId () << " "
+                << tracker.PrintPhyPacketsPerGw (Seconds (0), appStopTime + Minutes (10), object->GetId ())
                 << std::endl;
         }
       fileG.close ();
     }
-//  std::cout << cc << std::endl;
-//  std::cout << packetTracker.size();
   return 0;
-}s
+}

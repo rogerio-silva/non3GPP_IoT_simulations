@@ -84,11 +84,22 @@ The first step is to build the version 3.36 of NS3.
 git clone https://github.com/nsnam/ns-3-dev-git ns-3
 cd ns-3
 git checkout ns-3.36
-cp -r ../contrib/* ./contrib/
-ln -s ~/iot-sim/scratch/optimal-distrib-experiment.cc ~/iot-sim/ns-3/scratch/optimal-distrib-experiment.cc
-ln -s ~/iot-sim/scratch/thesis-experiment.cc ~/iot-sim/ns-3/scratch/thesis-experiment.cc
+
+cp -r ../contrib/* ./contrib
+cp -r ../scratch/* ./scratch
+
 ./ns3 configure --enable-examples
 ./ns3 build
+```
+Then, compile the source code from the ns-3 scratch files. The error messages presented at this step occur because we have not yet sent the appropriate execution parameters, ignore them.
+
+```
+./ns3 run scratch/ed-do-placement.cc
+./ns3 run scratch/gw-do-placement.cc
+./ns3 run scratch/op-prepare.cc
+./ns3 run scratch/do-experiment.cc
+./ns3 run scratch/eq-experiment.cc
+./ns3 run scratch/op-experiment.cc
 ```
 
 The following python packages are needed to execute the experiment.
@@ -101,33 +112,52 @@ We can then start the experimentation process, after every step you can check th
 
 ### 1st Step - Generating Input Data
 
-use the notebook [`equidistantPlacement.ipynb`](./equidistantPlacement.ipynb) to generate the files with the virtual positions for LoRa-GWs.
-
-Generate the files with LoRa-ED positions using the NS3 script, you can modify the number of devices with the option `--nDevices=x` and the seed for the pseudo random distribution of the devices with the option `--seed=y`.
+a. Generate the files with the virtual positions for UAVs placement. You must configure the `verbose` parameter to 1 to print the positions on the screen during execution or 0 otherwise. In any case, the name of each file is printed.
 
 ```bash
-./ns-3/build/scratch/ns3.36-devices-density-oriented-distrib-default --nDevices=30 --seed=1
+cd iot-sim
+python eq-placement.py 1
 ```
+> The generated file names will follow the pattern `equidistantPlacement_xx.dat`, where `xx` is a number of virtual positions for UAVs deployment.
 
-To finalize, generate the files with slice association of the devices.
+b. Generate the files with LoRa-ED positions using the NS3 script, you can modify the number of devices with the option `--nDevices=x` and the seed for the pseudo random distribution of the devices with the option `--seed=y`.
 
 ```bash
-./ns-3/build/scratch/ns3.36-thesis-experiments-default --nDevices=30 --seed=1 --nGateways=25 --nPlanes=1 --verbose
+./ns-3/build/scratch/ns3.36-ed-do-placement-debug --nDevices=30 --seed=1
 ```
+> The generated file names will follow the pattern `endDevices_LNM_Placement_1s+30d.dat`, where `1s` and `30d` follow the adopted parameters for seed and devices.
+
+c. Generate the files with UAVs positions to the baseline Density-Oriented UAVs experiment.
+```bash
+./ns-3/build/scratch/ns3.36-gw-do-placement-debug --nDevices=30 --seed=1 --nGateways=4
+```
+> The generated file names will follow the pattern `densityOrientedPlacement_1s+30d+4g.dat`, where `1s`, `30d` and `4d` follow the adopted parameters for seed, devices and gateways(UAVs).
+
+d. To finalize this step, generate the files with slice association of the devices and other optimization model input parameters.
+
+```bash
+./ns-3/build/scratch/ns3.36-op-prepare-debug --nDevices=30 --nGateways=25 --seed=1 --nPlanes=1
+```
+> The files containing the input settings for the optimization model are generated in the `data/model` folder.
 
 ### 2nd Step - Optimization Model
 
 To execute the optimization model, we need to pass in order the number of virtual positions (25), number of height levels (1), number of devices (30), device distribution seed (1) and QoS lower bound (0.9). 
 
 ```bash
+cd iot-sim
 python model.py 25 1 30 1 0.9
 ```
 
-### 3rd Step - Simulation
+### 3rd Step - Simulations
 
-We are ready to execute the simulation with the solution obtained in the last step. 
+This step simulates the data obtained in the previous steps. The EQ, DO, and OP simulations are executed based on the same input file with the device distribution, which is ensured by running the experiments with the same seed. The EQ and DO experiments are the baselines. The EQ distributes the UAVs to maintain equidistance between their positions. The DO distributes the UAVs following the density of the device distribution. In the OP experiment, positioning is based on the optimization results, which indicate the optimal positions for positioning. 
 
 ```bash
-./ns-3/build/scratch/ns3.36-optimal-distrib-experiment-default --nDevices=30 --seed=1 --nGateways=25 
+./ns-3/build/scratch/ns3.36-eq-experiment-debug --nDevices=30 --seed=1 --nGateways=25
+./ns-3/build/scratch/ns3.36-do-experiment-debug --nDevices=30 --seed=1 --nGateways=25
+./ns-3/build/scratch/ns3.36-op-experiment-debug --nDevices=30 --seed=1 --nGateways=25
+```
 
 The simulation output can be found in the directory [./data/results/](./data/results/).
+./ns    

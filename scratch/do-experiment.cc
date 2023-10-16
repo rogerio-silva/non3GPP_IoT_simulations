@@ -415,7 +415,7 @@ main (int argc, char *argv[])
 
   NS_LOG_INFO ("Creating gateways...");
 
-  std::string filename = "./datafile/do_placement_" +
+  std::string filename = "/data/model/output/do_placement_" +
                          std::to_string (seed) + "s+" + std::to_string (nDevices) + "d+" +
                          std::to_string (nGateways) + "g.dat";
 

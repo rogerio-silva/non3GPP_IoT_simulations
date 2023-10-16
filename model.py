@@ -1,3 +1,4 @@
+import io
 from collections import defaultdict, namedtuple
 import pyomo.environ as pyomo
 import pandas
@@ -10,7 +11,6 @@ parser.add_argument("nGat")
 parser.add_argument("nPla")
 parser.add_argument("nDev")
 parser.add_argument("seed")
-parser.add_argument("fabric")
 parser.add_argument("qos_bound")
 
 args = parser.parse_args()
@@ -29,11 +29,11 @@ MAX_DELAY = PACKET_SIZE / MIN_RKC
 
 startPre = timer()
 
-# NS-3 "thesis-experimentation" pre-processed files 
-path_data = "./input_data/" 
-gateway_data = "./datafile/equidistant/placement/"
-devices_data = "./datafile/devices/placement/"
-path_output = "./output_data/" 
+cwd = os.getcwd()
+path_output = cwd + "/data/model/output/"
+path_data = cwd + "/data/model/"
+gateway_data = cwd + "/data/placement/"
+devices_data = cwd + "/data/placement/"
 
 end_device_position_file = devices_data + "endDevices_LNM_Placement_" + str(args.seed) + "s+" + str(args.nDev) + "d.dat"
 #"endDevices_LNM_Placement_1s+10d.dat"
@@ -500,9 +500,10 @@ fileGwPlacement =  path_output + "optimizedPlacement_"  + \
                                 str(args.nGat) + "x" + \
                                 str(args.nPla) +"Gv_" + \
                                 str(args.nDev) + "D.dat"
-                                
-with open(fileGwPlacement, "w+") as outfile:
-    outfile.write(gatewaysPositions)
+
+data = pandas.read_csv(io.StringIO(gatewaysPositions), names=['x', 'y', 'z'], sep=" ", index_col=False)
+data.drop_duplicates(inplace=True)
+data.to_csv(fileGwPlacement, header=False, sep=" ", index=False)
 
 fileCfgPlacement =  path_output + "optimizedDevicesConfigurations_" + \
                                 str(args.seed) + "s_" + \
