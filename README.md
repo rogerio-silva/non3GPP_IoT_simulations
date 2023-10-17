@@ -160,5 +160,4 @@ This step simulates the data obtained in the previous steps. The EQ, DO, and OP 
 ./ns-3/build/scratch/ns3.36-op-experiment-debug --nDevices=30 --seed=1 --nGateways=25
 ```
 
-The simulation output can be found in the directory [./data/results/](./data/results/).
-./ns    
+The simulation output can be found in the directory [./data/results/](./data/results/). 
