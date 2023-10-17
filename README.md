@@ -139,7 +139,7 @@ d. To finalize this step, generate the files with slice association of the devic
 ```bash
 ./ns-3/build/scratch/ns3.36-op-prepare-debug --nDevices=30 --nGateways=25 --seed=1 --nPlanes=1
 ```
-> The files containing the input settings for the optimization model are generated in the `data/model` folder.
+> The files containing the input settings for the optimization model are generated in the [./data/model/](./data/model/) folder.
 
 ### 2nd Step - Optimization Model
 
