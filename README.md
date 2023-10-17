@@ -1,11 +1,12 @@
 # Dynamic resources allocation in non-3GPP IoT networks involving UAVs
 
 
-<p align='center' style="margin-bottom: -4px">Rogério S. Silva$^ \dagger$, William P. Junior<sup>*</sup>, Sand L. Correa<sup>*</sup>, Kleber V. Cardoso<sup>*</sup>, Antonio Oliveira-JR<sup>*</sup></p>
-<p align='center' style="margin-bottom: -4px">$^\dagger$NumbERS, Instituto Federal de Goiás-Inhumas-GO</p>
-<p align='center' style="margin-bottom: -4px">E-mail: {rogerio.sousa}@ifg.edu.br</p>
-<p align='center' style="margin-bottom: -4px"><sup>*</sup>Instituto de Informática, Universidade Federal de Goiás</p>
+<p align='center' style="margin-bottom: -4px">Rogério S. Silva<sup>1,2</sup>, William P. Junior<sup>1</sup>, Sand L. Correa<sup>1</sup>, Kleber V. Cardoso<sup>1</sup>, Antonio Oliveira-JR<sup>1</sup></p>
+<p align='center' style="margin-bottom: -4px"><sup>1</sup>Instituto de Informática, Universidade Federal de Goiás</p>
 <p align='center'>E-mail: {williamtpjunior, sand, kleber, antonio}@inf.ufg.br</p>
+
+<p align='center' style="margin-bottom: -4px"><sup>2</sup>NumbERS, Instituto Federal de Goiás-Inhumas-GO</p>
+<p align='center' style="margin-bottom: -4px">E-mail: {rogerio.sousa}@ifg.edu.br</p>
 
 ## Abstract
 
