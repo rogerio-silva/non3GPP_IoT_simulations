@@ -16,9 +16,9 @@
 	- [Requirements](#requirements)
 	- [Preparing Environment](#preparing-environment)
  	- [Run Experiments](#run-experiments)
-  		- [1st Generating Input Data](1st-generating-input-data)
-  		- [2nd Optimization Model](2nd-optimization-model)      
-  		- [3rd Simulations](3rd-simulations)
+  		- [Generating Input Data](#generating-input-data)
+  		- [Optimization Model](#optimization-model)      
+  		- [Simulations](#simulations)
 
 - [How to cite](#how-to-cite)
 
@@ -130,7 +130,7 @@ pip install pyomo pandas matplotlib blob
 We can then start the experimentation process; after every step, you can check the generated files inside [data/](data/) folder.
 
 ## Run Experiments
-### 1st Generating Input Data
+### Generating Input Data
 
 a. Generate the files with the virtual positions for UAV placement. You must configure the `verbose` parameter to 1 to print the positions on the screen during execution or 0 otherwise. In any case, the name of each file is printed.
 
@@ -161,7 +161,7 @@ d. To finalize this step, generate the files with slice association of the devic
 > The files containing the input settings for the optimization model are generated in the [./data/model/](./data/model/) folder.
 [Back to TOC](#table-of-contents)
 
-### 2nd Optimization Model
+### Optimization Model
 
 To execute the optimization model, we need to pass in order the number of virtual positions (25), number of height levels (1), number of devices (30), device distribution seed (1) and QoS lower bound (0.9). 
 
@@ -171,7 +171,7 @@ python model.py 25 1 30 1 0.9
 ```
 [Back to TOC](#table-of-contents)
 
-### 3rd Simulations
+### Simulations
 
 This step simulates the data obtained in the previous steps. The EQ, DO, and OP simulations are executed based on the same input file with the device distribution, which is ensured by running the experiments with the same seed. The EQ and DO experiments are the baselines. The EQ distributes the UAVs to maintain equidistance between their positions. The DO distributes the UAVs following the density of the device distribution. In the OP experiment, positioning is based on the optimization results, which indicate the optimal positions for positioning. 
 
