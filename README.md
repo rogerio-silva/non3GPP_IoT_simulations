@@ -14,11 +14,11 @@
 	- [Results](#results)
 - [Replicating the Experiment](#replicating-the-experiment)
 	- [Requirements](#requirements)
-	- [Preparing Environment](#prepare-environment)
+	- [Preparing Environment](#preparing-environment)
  	- [Run Experiments](#run-experiments)
-  		- [1st Step - Generating Input Data](1st-step---generating-input-data)
-  		- [2nd Step - Optimization Model](1st-step---optimization-model)      
-  		- [3rd Step - Simulations](1rd-step---simulations)
+  		- [1st Step - Generating Input Data](1st-step-generating-input-data)
+  		- [2nd Step - Optimization Model](1st-step-optimization-model)      
+  		- [3rd Step - Simulations](1rd-step-simulations)
 
 - [How to cite](#how-to-cite)
 
