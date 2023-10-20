@@ -13,18 +13,14 @@
 	- [Proposed placement algorithm](#proposed-placement-algorithm)
 	- [Results](#results)
 - [Replicating the Experiment](#replicating-the-experiment)
-- 
-## How to cite
-It is a pleasure to share our knowledge, and you are free to use it! Please cite our work so we can continue contributing. Thank you!
-```
-@INPROCEEDINGS{silva2023-dyn-res-non3gpp-iot-uav,
-    author={Silva, Rogério S. and Pires, William and Correa, Sand L. and Oliveira, Antonio and Cardoso, Kleber V.},
-    booktitle={{2023 IEEE 97th Vehicular Technology Conference (VTC2023-Spring)}},
-    title={{Dynamic resources allocation in non-3GPP IoT networks involving UAVs}},
-    year={2023}, volume={}, number={}, pages={1-5},
-    doi={10.1109/VTC2023-Spring57618.2023.10199941}
-}
-```
+	- [Requirements](#requirements)
+	- [Preparing Environment](#prepare-environment)
+ 	- [Run Experiments](#run-experiments)
+  		- [1st Step - Generating Input Data](1st-step---generating-input-data)
+  		- [2nd Step - Optimization Model](1st-step---optimization-model)      
+  		- [3rd Step - Simulations](1rd-step---simulations)
+
+- [How to cite](#how-to-cite)
 
 ## Abstract
 
@@ -42,6 +38,7 @@ DO was developed to place UAVs in the most populated areas, following the EDs de
 <img src="/images/OP_Algorithm.png" width="500">
 
 The OP algorithm presents our approach for positioning UAVs-based gateways following the optimization model in section 2. The algorithm receives as input the area for positioning devices ($\mathcal{A}_{(MxN)}$), the UAV placement area ($\mathcal{V}_{(XxYxZ)}$), and the expected QoS limit ($\rho^{QoS}_l$). In line 1, the devices are distributed following a realistic spatial distribution (here). In lines 2 and 3, the set of communication parameters between the devices and each virtual position, in addition to the association of the devices to the respective slices. In line 4, the optimization algorithm is executed. The OP results in the UAVs positions set $\mathcal{P}$, the SF (spreading factor) and TP (transmission power) configurations set $\mathcal{C}$, and the slices associations set $\mathcal{S}$. Finally, the resulting data are modeled in the NS-3, and the simulation is performed.
+[Back to TOC](#table-of-contents)
 
 ## Results
 The results were obtained from 50 executions for 40, 50, and 60 devices. In each execution, a group of devices and the UAVs are deployed according to the algorithms EQ, DO, and OP presented earlier. 
@@ -78,6 +75,7 @@ Figure 2 presents the number of UAVs needed to meet the QoS threshold determined
 </p>
 
 Figure 3 displays results relative to QoS. The large areas in light colors for OP demonstrate the excellent efficiency of the proposed algorithm. Furthermore, it is possible to observe that the number of unanswered EDs is more minor than DO and EQ, denoted by the black dots. Another highlight about DO and EQ is that in addition to presenting the highest rates of EDs not met, the rates of QoS reached are much worse than in OP, denoted by the red and purple dots on the respective figures.
+[Back to TOC](#table-of-contents)
 
 # Replicating The Experiment
 
@@ -87,6 +85,8 @@ Figure 3 displays results relative to QoS. The large areas in light colors for O
 - CMAKE (>=3.24)
 - python (3.11.4)
 - [SCIP Optimization Suite (8.0.3)](https://scipopt.org/index.php#download)
+  
+[Back to TOC](#table-of-contents)
 
 ## Preparing Environment
 
@@ -129,6 +129,7 @@ pip install pyomo pandas matplotlib blob
 
 We can then start the experimentation process; after every step, you can check the generated files inside [data/](data/) folder.
 
+## Experimentation
 ### 1st Step - Generating Input Data
 
 a. Generate the files with the virtual positions for UAV placement. You must configure the `verbose` parameter to 1 to print the positions on the screen during execution or 0 otherwise. In any case, the name of each file is printed.
@@ -179,6 +180,7 @@ This step simulates the data obtained in the previous steps. The EQ, DO, and OP 
 ```
 
 The simulation output can be found in the directory [./data/results/](./data/results/). 
+[Back to TOC](#table-of-contents)
 
 ## How to cite
 It is a pleasure to share our knowledge, and you are free to use it! Please cite our work so we can continue contributing. Thank you!
@@ -191,3 +193,4 @@ It is a pleasure to share our knowledge, and you are free to use it! Please cite
     doi={10.1109/VTC2023-Spring57618.2023.10199941}
 }
 ```
+[Back to TOC](#table-of-contents)
