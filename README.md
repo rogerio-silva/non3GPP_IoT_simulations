@@ -1,10 +1,8 @@
 # Dynamic resources allocation in non-3GPP IoT networks involving UAVs
 
-
 <p align='center' style="margin-bottom: -4px">Rogério S. Silva<sup>1,2</sup>, William P. Junior<sup>1</sup>, Sand L. Correa<sup>1</sup>, Kleber V. Cardoso<sup>1</sup>, Antonio Oliveira-JR<sup>1</sup></p>
 <p align='center' style="margin-bottom: -4px"><sup>1</sup>Instituto de Informática, Universidade Federal de Goiás</p>
 <p align='center'>E-mail: {williamtpjunior, sand, kleber, antonio}@inf.ufg.br</p>
-
 <p align='center' style="margin-bottom: -4px"><sup>2</sup>NumbERS, Instituto Federal de Goiás-Inhumas-GO</p>
 <p align='center' style="margin-bottom: -4px">E-mail: {rogerio.sousa}@ifg.edu.br</p>
 
@@ -161,3 +159,9 @@ This step simulates the data obtained in the previous steps. The EQ, DO, and OP 
 ```
 
 The simulation output can be found in the directory [./data/results/](./data/results/). 
+
+## How to cite
+It is a pleasure to share our knowledge, and you are free to use it! Please cite our work so we can continue contributing. Thank you!
+```
+@INPROCEEDINGS{silva2023-dyn-res-non3gpp-iot-uav, author={Silva, Rogério S. and Pires, William and Correa, Sand L. and Oliveira, Antonio and Cardoso, Kleber V.}, booktitle={{2023 IEEE 97th Vehicular Technology Conference (VTC2023-Spring)}}, title={{Dynamic resources allocation in non-3GPP IoT networks involving UAVs}}, year={2023}, volume={}, number={}, pages={1-5}, doi={10.1109/VTC2023-Spring57618.2023.10199941}}
+```
