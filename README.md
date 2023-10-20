@@ -6,6 +6,7 @@
 <p align='center' style="margin-bottom: -4px"><sup>2</sup>NumbERS, Instituto Federal de Goiás-Inhumas-GO</p>
 <p align='center' style="margin-bottom: -4px">E-mail: {rogerio.sousa}@ifg.edu.br</p>
 
+# Table of Contents
 - [Article Summary](#getting-started)
 	- [Abstract](#abstract)
 	- [Baselines](#baselines)
@@ -23,6 +24,7 @@ It is a pleasure to share our knowledge, and you are free to use it! Please cite
     year={2023}, volume={}, number={}, pages={1-5},
     doi={10.1109/VTC2023-Spring57618.2023.10199941}
 }
+```
 
 ## Abstract
 
