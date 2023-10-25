@@ -297,7 +297,7 @@ main (int argc, char *argv[])
   bool verbose = false;
   int seed = 1;
   bool up = false;
-  int packetSize = 41;
+  int packetSize = 50;
 
   CommandLine cmd;
   cmd.AddValue ("nDevices", "Number of end devices to include in the simulation", nDevices);

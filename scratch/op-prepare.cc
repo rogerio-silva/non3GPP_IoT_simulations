@@ -112,7 +112,7 @@ ChannelSettings ()
     {
       Ptr<LogDistancePropagationLossModel> loss = CreateObject<LogDistancePropagationLossModel> ();
       loss->SetPathLossExponent (3.76);
-      loss->SetReference (1, 7.7);
+      loss->SetReference (1, 10.0);
       // Create the correlated shadowing component
       Ptr<CorrelatedShadowingPropagationLossModel> shadowing =
           CreateObject<CorrelatedShadowingPropagationLossModel> ();
